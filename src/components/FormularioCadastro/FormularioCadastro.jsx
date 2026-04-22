@@ -1,77 +1,82 @@
-import React, { Component } from "react";
-import "./estilo.css";
-class FormularioCadastro extends Component {
-  constructor(props) {
-    super(props);
-    this.titulo = "";
-    this.texto = "";
-    this.categoria = "Sem Categoria";
-    this.state = { categorias: [] };
+import React, { useRef } from "react";
+import { useNotas } from "../../contexts/NotasContext.jsx";
 
-    this._novasCategorias = this._novasCategorias.bind(this);
-  }
+function FormularioCadastro() {
+  const { categorias, adicionarNota } = useNotas();
+  const tituloRef = useRef(null);
+  const textoRef = useRef(null);
+  const categoriaRef = useRef(null);
 
-  componentDidMount() {
-    this.props.categorias.inscrever(this._novasCategorias);
-  }
-
-  componentWillUnmount() {
-    this.props.categorias.desinscrever(this._novasCategorias);
-  }
-  _novasCategorias(categorias) {
-    this.setState({ ...this.state, categorias });
-  }
-  _handleMudancaCategoria(evento) {
-    evento.stopPropagation();
-    this.categoria = evento.target.value;
-  }
-  _handleMudancaTitulo(evento) {
-    evento.stopPropagation();
-    this.titulo = evento.target.value;
-  }
-
-  _handleMudancaTexto(evento) {
-    evento.stopPropagation();
-    this.texto = evento.target.value;
-  }
-
-  _criarNota(evento) {
+  function criarNota(evento) {
     evento.preventDefault();
     evento.stopPropagation();
-    this.props.criarNota(this.titulo, this.texto, this.categoria);
+
+    const titulo = tituloRef.current.value;
+    const texto = textoRef.current.value;
+    const categoria = categoriaRef.current.value;
+
+    adicionarNota(titulo, texto, categoria);
+
+    // Limpar os campos após criar a nota
+    tituloRef.current.value = "";
+    textoRef.current.value = "";
+    categoriaRef.current.value = "Sem Categoria";
   }
 
-  render() {
-    return (
-      <form className="form-cadastro" onSubmit={this._criarNota.bind(this)}>
-        <select
-          onChange={this._handleMudancaCategoria.bind(this)}
-          className="form-cadastro_input"
-        >
-          <option>Sem Categoria</option>
+  return (
+    <div className="bg-white rounded-2xl shadow-lg p-6 sticky top-8">
+      <h2 className="text-xl font-semibold text-gray-800 mb-4">✨ Nova Nota</h2>
 
-          {this.state.categorias.map((categoria, index) => {
-            return <option key={index}>{categoria}</option>;
-          })}
-        </select>
-        <input
-          type="text"
-          placeholder="Título"
-          className="form-cadastro_input"
-          onChange={this._handleMudancaTitulo.bind(this)}
-        />
-        <textarea
-          rows={15}
-          placeholder="Escreva sua nota..."
-          className="form-cadastro_input"
-          onChange={this._handleMudancaTexto.bind(this)}
-        />
-        <button className="form-cadastro_input form-cadastro_submit">
+      <form onSubmit={criarNota} className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Categoria
+          </label>
+          <select
+            ref={categoriaRef}
+            defaultValue="Sem Categoria"
+            className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all outline-none bg-white text-gray-700"
+          >
+            <option>Sem Categoria</option>
+            {categorias.map((categoria, index) => (
+              <option key={index}>{categoria}</option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Título
+          </label>
+          <input
+            ref={tituloRef}
+            type="text"
+            placeholder="Digite o título..."
+            className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all outline-none"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Conteúdo
+          </label>
+          <textarea
+            ref={textoRef}
+            rows={12}
+            placeholder="Escreva sua nota..."
+            className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all outline-none resize-none"
+          />
+        </div>
+
+        <button
+          type="submit"
+          className="w-full bg-gradient-to-r from-indigo-600 to-cyan-600 text-white font-semibold py-3 rounded-lg hover:from-indigo-700 hover:to-cyan-700 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+        >
           Criar Nota
         </button>
       </form>
-    );
-  }
+    </div>
+  );
 }
 
 export default FormularioCadastro;

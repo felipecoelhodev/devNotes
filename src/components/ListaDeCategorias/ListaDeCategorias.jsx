@@ -1,50 +1,53 @@
-import React, { Component } from "react";
-import "./estilo.css";
-class ListaDeCategorias extends Component {
-  constructor() {
-    super();
-    this.state = { categorias: [] };
-    this._novasCategorias = this._novasCategorias.bind(this);
-  }
-  componentDidMount() {
-    this.props.categorias.inscrever(this._novasCategorias);
-  }
+import React, { useRef } from "react";
+import { useNotas } from "../../contexts/NotasContext.jsx";
 
-  componentWillUnmount() {
-    this.props.categorias.desinscrever(this._novasCategorias);
-  }
+function ListaDeCategorias() {
+  const { categorias, adicionarCategoria } = useNotas();
+  const inputRef = useRef(null);
 
-  _novasCategorias(categorias) {
-    this.setState({ ...this.state, categorias });
-  }
-
-  _handleEventoInput(e) {
-    if (e.key == "Enter") {
-      let valorCategoria = e.target.value;
-      this.props.adicionarCategoria(valorCategoria);
+  function handleSubmit(e) {
+    e.preventDefault();
+    const valorCategoria = inputRef.current.value;
+    if (valorCategoria.trim()) {
+      adicionarCategoria(valorCategoria);
+      inputRef.current.value = "";
     }
   }
-  render() {
-    return (
-      <section className="lista-categorias">
-        <ul className="lista-categorias_lista">
-          {this.state.categorias.map((categoria, index) => {
-            return (
-              <li key={index} className="lista-categorias_item">
-                {categoria}
-              </li>
-            );
-          })}
-        </ul>
+
+  return (
+    <div className="bg-white rounded-2xl shadow-lg p-6">
+      <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
+        <span>🏷️</span>
+        <span>Categorias</span>
+      </h2>
+
+      <form onSubmit={handleSubmit} className="mb-4">
         <input
+          ref={inputRef}
           type="text"
-          className="lista-categorias_input"
-          placeholder="Adicionar Categoria"
-          onKeyUp={this._handleEventoInput.bind(this)}
+          placeholder="Nova categoria..."
+          className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all outline-none text-sm"
         />
-      </section>
-    );
-  }
+      </form>
+
+      {categorias.length > 0 ? (
+        <ul className="space-y-2">
+          {categorias.map((categoria, index) => (
+            <li
+              key={index}
+              className="px-4 py-2.5 bg-gradient-to-r from-indigo-50 to-cyan-50 rounded-lg text-sm font-medium text-gray-700 border border-indigo-100 hover:border-indigo-300 transition-all cursor-default"
+            >
+              {categoria}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="text-sm text-gray-500 text-center py-4">
+          Nenhuma categoria criada
+        </p>
+      )}
+    </div>
+  );
 }
 
 export default ListaDeCategorias;
