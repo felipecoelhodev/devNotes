@@ -1,6 +1,6 @@
 # DevNotes 
 
-O **DevNotes** é um aplicativo de gerenciamento de notas focado em simplicidade e eficiência. Desenvolvido com as tecnologias mais modernas do ecossistema React, ele permite que você organize suas ideias por categorias, realize buscas rápidas e mantenha tudo salvo.
+O **DevNotes** é um aplicativo de gerenciamento de notas focado em simplicidade e eficiência. Desenvolvido para praticar e aplicar o estudo de React e a interpretação/conversão de código legado, feito inicialmente com código legado e convertido com as tecnologias mais modernas do ecossistema React, ele permite que você organize suas ideias por categorias, realize buscas rápidas e mantenha tudo salvo.
 
 ## Funcionalidades
 
