@@ -1,8 +1,9 @@
 import React, { useRef } from "react";
 import { useNotas } from "../../contexts/NotasContext.jsx";
+import DeleteSVG from "../../assets/img/delete.svg?react";
 
 function ListaDeCategorias() {
-  const { categorias, adicionarCategoria } = useNotas();
+  const { categorias, adicionarCategoria, apagarCategoria } = useNotas();
   const inputRef = useRef(null);
 
   function handleSubmit(e) {
@@ -14,10 +15,13 @@ function ListaDeCategorias() {
     }
   }
 
+  function handleDelete(categoria) {
+    apagarCategoria(categoria);
+  }
+
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-6">
-      <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
-        <span>🏷️</span>
+    <div className="bg-slate-900/80 rounded-2xl shadow-lg p-6 border border-slate-800 backdrop-blur-sm">
+      <h2 className="text-xl font-semibold text-slate-100 mb-4 flex items-center gap-2">
         <span>Categorias</span>
       </h2>
 
@@ -26,23 +30,33 @@ function ListaDeCategorias() {
           ref={inputRef}
           type="text"
           placeholder="Nova categoria..."
-          className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all outline-none text-sm"
+          className="w-full px-4 py-2.5 rounded-lg border border-slate-700 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all outline-none text-sm bg-slate-900 text-slate-100"
         />
       </form>
 
       {categorias.length > 0 ? (
         <ul className="space-y-2">
-          {categorias.map((categoria, index) => (
+          {categorias.map((categoria) => (
             <li
-              key={index}
-              className="px-4 py-2.5 bg-gradient-to-r from-indigo-50 to-cyan-50 rounded-lg text-sm font-medium text-gray-700 border border-indigo-100 hover:border-indigo-300 transition-all cursor-default"
+              key={categoria}
+              className="px-4 py-2.5 bg-linear-to-r from-indigo-500/10 to-cyan-500/10 rounded-lg text-sm font-medium text-slate-200 border border-indigo-400/20 hover:border-indigo-300/40 transition-all"
             >
-              {categoria}
+              <div className="flex items-center justify-between gap-3">
+                <span className="truncate">{categoria}</span>
+                <button
+                  type="button"
+                  onClick={() => handleDelete(categoria)}
+                  className="text-slate-400 hover:text-red-400 transition-colors p-1 rounded-lg hover:bg-red-500/10 cursor-pointer shrink-0"
+                  aria-label={`Apagar categoria ${categoria}`}
+                >
+                  <DeleteSVG className="w-4 h-4" />
+                </button>
+              </div>
             </li>
           ))}
         </ul>
       ) : (
-        <p className="text-sm text-gray-500 text-center py-4">
+        <p className="text-sm text-slate-400 text-center py-4">
           Nenhuma categoria criada
         </p>
       )}
